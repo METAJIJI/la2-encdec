@@ -1,4 +1,4 @@
-﻿#
+ #
 # L2 file decoder (18:33 14.07.2012).
 # @author METAJIJI Kadyshev Denis
 #
@@ -8,8 +8,7 @@ use Time::HiRes qw(gettimeofday);
 use strict;
 use Encode;		# use Encode qw(from_to);
 #use MIME::Base64;	# encode_base64 () и decode_base64 () для кодирования и декодирования соответственно.
-#use Compress::Zlib qw(compress uncompress);
-use Compress::Zlib qw(uncompress);
+use Compress::Zlib qw(compress uncompress);
 use Math::BigInt;
 use Math::BigInt only => 'GMP';
 use Data::Dumper;
@@ -31,34 +30,6 @@ if ($original == 1) {	# 1 - File is Original | 0 - File is not Original
 	my $s= q[0x75b4d6de5c016544068a1acf125869f43d2e09fc55b8b1e289556daf9b8757635593446288b3653da1ce91c87bb1a5c18f16323495c55d7d72c0890a83f69bfd1fd9434eb1c02f3e4679edfa43309319070129c267c85604d87bb65bae205de3707af1d2108881abb567c3b3d069ae67c3a4c6a3aa93d26413d4c66094ae2039];
 	$mod = Math::BigInt->new($s);
 	$exp = Math::BigInt->new('0x1d');
-}
-
-sub compress($;$) {
-	my ($x, $output, $err, $in) =('', '', '', '') ;
-
-	if (ref $_[0] ) {
-		$in = $_[0] ;
-		croak "not a scalar reference" unless ref $in eq 'SCALAR' ;
-	}
-	else {
-		$in = \$_[0] ;
-	}
-
-	$] >= 5.008 and (utf8::downgrade($$in, 1) 
-		or croak "Wide character in compress");
-
-	my $level = (@_ == 2 ? $_[1] : Z_DEFAULT_COMPRESSION() );
-
-	$x = new Compress::Raw::Zlib::Deflate -AppendOutput => 1, -Level => $level
-			or return undef ;
-
-	$err = $x->deflate($in, $output) ;
-	return undef unless $err == Z_OK() ;
-
-	$err = $x->flush($output) ;
-	return undef unless $err == Z_OK() ;
-	
-	return $output ;
 }
 
 # Вычисление времени выполения скрипта
